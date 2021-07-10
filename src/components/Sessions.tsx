@@ -1,5 +1,5 @@
 import React from 'react';
-import { Event, SessionObj } from './App';
+import { Event, SessionObj } from '../Routes/Event/event';
 
 type Props = {
 	sessionsArr: SessionObj[];

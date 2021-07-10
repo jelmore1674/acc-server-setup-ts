@@ -1,0 +1,87 @@
+[{
+        "year": 2018,
+        "tracks": [{
+                "trackName": "barcelona",
+                "title": "Barcelona"
+            },
+            {
+                "trackName": "brands_hatch",
+                "title": "Brands Hatch"
+            },
+
+            {
+                "trackName": "hungaroring",
+                "title": "Hungaroring"
+            },
+            {
+                "trackName": "misano",
+                "title": "Misano"
+            },
+            {
+                "trackName": "monza",
+                "title": "Monza"
+            },
+            {
+                "trackName": "nurburgring",
+                "title": "Nurburgring"
+            },
+            {
+                "trackName": "paulRicard",
+                "title": "Paul Ricard"
+            },
+            {
+                "trackName": "silverstone",
+                "title": "Silverstone"
+            },
+            {
+                "trackName": "spa",
+                "title": "Spa"
+            },
+            {
+                "trackName": "zanvoort",
+                "title": "Zanvoort"
+            },
+            {
+                "trackName": "zolder",
+                "title": "Zolder"
+            }
+        ]
+    },
+    {
+        "year": 2019,
+        "tracks": [{
+                "trackName": "barcelona",
+                "title": "Barcelona"
+            },
+            {
+                "trackName": "brands_hatch",
+                "title": "Brands Hatch"
+            },
+
+            {
+                "trackName": "hungaroring",
+                "title": "Hungaroring"
+            },
+            {
+                "trackName": "misano",
+                "title": "Misano"
+            },
+            {
+                "trackName": "monza",
+                "title": "Monza"
+            },
+            {
+                "trackName": "nurburgring",
+                "title": "Nurburgring"
+            },
+            {
+                "trackName": "paulRicard",
+                "title": "Paul Ricard"
+            },
+            {
+                "trackName": "silverstone",
+                "title": "Silverstone"
+            }
+        ]
+    }
+]
