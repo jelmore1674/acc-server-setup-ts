@@ -50,37 +50,49 @@
     {
         "year": 2019,
         "tracks": [{
-                "trackName": "barcelona",
+                "trackName": "barcelona_2019",
                 "title": "Barcelona"
             },
             {
-                "trackName": "brands_hatch",
+                "trackName": "brands_hatch_2019",
                 "title": "Brands Hatch"
             },
 
             {
-                "trackName": "hungaroring",
+                "trackName": "hungaroring_2019",
                 "title": "Hungaroring"
             },
             {
-                "trackName": "misano",
+                "trackName": "misano_2019",
                 "title": "Misano"
             },
             {
-                "trackName": "monza",
+                "trackName": "monza_2019",
                 "title": "Monza"
             },
             {
-                "trackName": "nurburgring",
+                "trackName": "nurburgring_2019",
                 "title": "Nurburgring"
             },
             {
-                "trackName": "paulRicard",
+                "trackName": "paulRicard_2019",
                 "title": "Paul Ricard"
             },
             {
-                "trackName": "silverstone",
+                "trackName": "silverstone_2019",
                 "title": "Silverstone"
+            },
+            {
+                "trackName": "spa_2019",
+                "title": "Spa"
+            },
+            {
+                "trackName": "zanvoort_2019",
+                "title": "Zanvoort"
+            },
+            {
+                "trackName": "zolder_2019",
+                "title": "Zolder"
             }
         ]
     }

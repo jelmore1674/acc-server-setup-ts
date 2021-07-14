@@ -3,7 +3,7 @@ import Event from './Routes/Event/event';
 
 function App() {
 	return (
-		<div>
+		<div className='container-sm'>
 			<Event />
 		</div>
 	);
