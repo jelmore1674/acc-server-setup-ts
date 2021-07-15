@@ -50,6 +50,12 @@ export default function EventRoute() {
 		defaultSession,
 	]);
 	const [rows, setRows] = useState(1);
+	const [opacity, setOpacity] = useState('');
+
+	const styles = {
+		transition: 'all 2s ease-out',
+		opacity: 0.3,
+	};
 
 	function handleSelectTrack(
 		event:
@@ -102,7 +108,7 @@ export default function EventRoute() {
 			<div className='col-10  align-center'>
 				<div>
 					<h1 className='h1 text-center'>ACC Server Setup Tool</h1>
-					<div className='row align-items-start'>
+					<div className='row align-items-start justify-content-evenly'>
 						<div className='col-4'>
 							<label>Select Year</label>
 							<select
@@ -148,11 +154,11 @@ export default function EventRoute() {
 						</div>
 					</div>
 				</div>
-				<div className='row justify-content-around'>
-					<div className='col-10 align-center'>
+				<div className='row my-3'>
+					<div className='col text-center'>
 						<h2>Set up the weather</h2>
-						<div className='row'>
-							<div className='col-3'>
+						<div className='row align-center border border-secondary my-3'>
+							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
 								<label>Temp</label>
 								<input
 									onChange={(e) => handleSelectTrack(e)}
@@ -162,7 +168,7 @@ export default function EventRoute() {
 									max='42'
 								/>
 							</div>
-							<div className='col-3'>
+							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
 								<label>Clouds</label>
 								<input
 									onChange={(e) => handleSelectTrack(e)}
@@ -172,7 +178,7 @@ export default function EventRoute() {
 									max='10'
 								/>
 							</div>
-							<div className='col-3'>
+							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
 								<label>Rain</label>
 								<input
 									onChange={(e) => handleSelectTrack(e)}
@@ -187,40 +193,48 @@ export default function EventRoute() {
 					</div>
 				</div>
 				{/* {displayedSessions} */}
-				{sessionsArr.map((session, index) => {
-					const {
-						sessionType,
-						hourOfDay,
-						dayOfWeekend,
-						timeMulitplier,
-						sessionDuration,
-					} = sessionsArr[index];
-					return (
-						<Sessions
-							id={index}
-							key={index}
-							defaultSessionType={sessionType}
-							defaultHourOfDay={hourOfDay}
-							defaultDayOfWeekend={dayOfWeekend}
-							defaultTimeMultiplier={timeMulitplier}
-							defaultSessionDuration={sessionDuration}
-							sessionsArr={sessionsArr}
-							setSessionsArr={setSessionsArr}
-							eventJSON={eventJSON}
-							setEventJSON={setEventJSON}
-							rows={rows}
-							setRows={setRows}
-						/>
-					);
-				})}
+				<div className='container-fluid '>
+					{sessionsArr.map((session, index) => {
+						const {
+							sessionType,
+							hourOfDay,
+							dayOfWeekend,
+							timeMulitplier,
+							sessionDuration,
+						} = sessionsArr[index];
+						return (
+							<div
+								className={`bg-secondary rounded animate__animated animate__backInRight mb-2 ${opacity}`}
+								style={{ ...styles }}>
+								<Sessions
+									id={index}
+									key={index}
+									defaultSessionType={sessionType}
+									defaultHourOfDay={hourOfDay}
+									defaultDayOfWeekend={dayOfWeekend}
+									defaultTimeMultiplier={timeMulitplier}
+									defaultSessionDuration={sessionDuration}
+									sessionsArr={sessionsArr}
+									setSessionsArr={setSessionsArr}
+									eventJSON={eventJSON}
+									setEventJSON={setEventJSON}
+									rows={rows}
+									setRows={setRows}
+									setOpacity={setOpacity}
+								/>
+							</div>
+						);
+					})}
+				</div>
 				<button
+					className='btn btn-lg bg-success m-4'
 					onClick={() => {
 						setSessionsArr((prev) => [...prev, defaultSession]);
 						console.log(sessionsArr);
 						setEventJSON({ ...eventJSON, sessions: sessionsArr });
 						// setRows(rows + 1);
 					}}>
-					Click to add
+					<i className='bi bi-plus-lg' style={{ color: 'white' }}></i>
 				</button>
 				<button
 					onClick={() => {

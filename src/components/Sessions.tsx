@@ -14,6 +14,7 @@ type Props = {
 	defaultDayOfWeekend: number;
 	defaultTimeMultiplier: number;
 	defaultSessionDuration: number;
+	setOpacity: (state: string) => void;
 };
 
 export default function Sessions({
@@ -29,6 +30,7 @@ export default function Sessions({
 	defaultDayOfWeekend,
 	defaultTimeMultiplier,
 	defaultSessionType,
+	setOpacity,
 }: Props) {
 	const [addedToArray, setAdded] = React.useState(false); // Should only be changed once on initial load of Sessions element
 	const [sessionType, setSessionType] = React.useState(defaultSessionType); // set initial values inside useState(*Initial value*)
@@ -40,6 +42,8 @@ export default function Sessions({
 		defaultSessionDuration
 	);
 	const [hourOfDay, setHourOfDay] = React.useState(defaultHourOfDay);
+	const rowRef = React.useRef(rows);
+	rowRef.current = rows;
 
 	// In the useEffect if (added) > update object, else > add to sessionArr
 	// Add an object with an initial starting state to sessionsArr
@@ -72,20 +76,22 @@ export default function Sessions({
 	}, [sessionType, hourOfDay, dayOfWeekend, timeMulitplier, sessionDuration]); // Add all form variables that require the object to be updated in this second parameter
 
 	function handleClick() {
-		setRows(rows - 1);
+		setOpacity('animated__ animate__backOutUp');
+		setTimeout(() => {
+			setRows(rowRef.current - 1);
+			setSessionsArr(sessionsArr);
+		}, 1000);
 		sessionsArr.splice(id, 1);
-		setSessionsArr(sessionsArr);
-		console.log(sessionsArr);
-		// setEventJSON({ ...eventJSON, sessions: sessionsArr });
+
+		// setOpacity('');
 	}
 
 	return (
-		<div className='row'>
+		<div className='row align-content-center '>
 			<div className='col'>
-				<h1>{id}</h1>
-				<h2>Sessions</h2>
+				<h2>Session {id + 1}</h2>
 				<div className='row'>
-					<div className='col-md'>
+					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
 						<label>Session Type</label>
 						<select
 							onChange={(e) => setSessionType(e.target.value)}
@@ -97,7 +103,7 @@ export default function Sessions({
 							<option value='r'>race</option>
 						</select>
 					</div>
-					<div className='col-2'>
+					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
 						<label>Session Day</label>
 						<select
 							onChange={(e) => {
@@ -112,7 +118,7 @@ export default function Sessions({
 							<option value='3'>Sunday</option>
 						</select>
 					</div>
-					<div className='col-2'>
+					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
 						<label>Session Start Time in Sim</label>
 						<input
 							onChange={(e) => {
@@ -125,7 +131,7 @@ export default function Sessions({
 							max='23'
 						/>
 					</div>
-					<div className='col-2'>
+					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
 						<label>Session Duration</label>
 						<input
 							onChange={(e) =>
@@ -138,7 +144,7 @@ export default function Sessions({
 							value={sessionDuration}
 						/>
 					</div>
-					<div className='col-2'>
+					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
 						<label>Time Mulitplier</label>
 						<input
 							onChange={(e) =>
@@ -151,8 +157,16 @@ export default function Sessions({
 							value={timeMulitplier}
 						/>
 					</div>
-					<div className='col-2'>
-						<button onClick={handleClick}>Click to remove</button>
+					<div className='col-2 d-flex flex-column justify-content-around mb-3'>
+						<button
+							className='btn btn-lg bg-danger p-3'
+							onClick={handleClick}>
+							<i
+								className='bi bi-trash fs-2'
+								style={{
+									color: 'white',
+								}}></i>
+						</button>
 					</div>
 					<div>{JSON.stringify(eventJSON.sessions[id])}</div>
 				</div>
