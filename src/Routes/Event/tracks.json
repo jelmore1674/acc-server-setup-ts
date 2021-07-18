@@ -54,13 +54,28 @@
                 "title": "Barcelona"
             },
             {
+                "trackName": "bathurst_2019",
+                "title": "Bathurst"
+            },
+            {
                 "trackName": "brands_hatch_2019",
                 "title": "Brands Hatch"
             },
-
+            {
+                "trackName": "donnington_2019",
+                "title": "Donnington Park"
+            },
             {
                 "trackName": "hungaroring_2019",
                 "title": "Hungaroring"
+            },
+            {
+                "trackName": "kyalami_2019",
+                "title": "Kyalami"
+            },
+            {
+                "trackName": "laguna_seca_2019",
+                "title": "Laguna Seca"
             },
             {
                 "trackName": "misano_2019",
@@ -75,7 +90,11 @@
                 "title": "Nurburgring"
             },
             {
-                "trackName": "paulRicard_2019",
+                "trackName": "oulton_park_2019",
+                "title": "Oulton Park"
+            },
+            {
+                "trackName": "paul_ricard_2019",
                 "title": "Paul Ricard"
             },
             {
@@ -83,8 +102,16 @@
                 "title": "Silverstone"
             },
             {
+                "trackName": "snetterton_2019",
+                "title": "Snetterton"
+            },
+            {
                 "trackName": "spa_2019",
                 "title": "Spa"
+            },
+            {
+                "trackName": "suzuka_2019",
+                "title": "Suzuka"
             },
             {
                 "trackName": "zanvoort_2019",
@@ -92,6 +119,59 @@
             },
             {
                 "trackName": "zolder_2019",
+                "title": "Zolder"
+            }
+        ]
+    },
+    {
+        "year": 2020,
+        "tracks": [{
+                "trackName": "barcelona_2020",
+                "title": "Barcelona"
+            },
+            {
+                "trackName": "brands_hatch_2020",
+                "title": "Brands Hatch"
+            },
+
+            {
+                "trackName": "hungaroring_2020",
+                "title": "Hungaroring"
+            },
+            {
+                "trackName": "imola_2020",
+                "title": "Imola"
+            },
+            {
+                "trackName": "misano_2020",
+                "title": "Misano"
+            },
+            {
+                "trackName": "monza_2020",
+                "title": "Monza"
+            },
+            {
+                "trackName": "nurburgring_2020",
+                "title": "Nurburgring"
+            },
+            {
+                "trackName": "paul_ricard_2020",
+                "title": "Paul Ricard"
+            },
+            {
+                "trackName": "silverstone_2020",
+                "title": "Silverstone"
+            },
+            {
+                "trackName": "spa_2020",
+                "title": "Spa"
+            },
+            {
+                "trackName": "zanvoort_2020",
+                "title": "Zanvoort"
+            },
+            {
+                "trackName": "zolder_2020",
                 "title": "Zolder"
             }
         ]

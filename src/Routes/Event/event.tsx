@@ -42,6 +42,44 @@ const defaultEvent: Event = {
 	sessions: [defaultSession],
 };
 
+interface Settings {
+	serverName: string;
+	adminPassword: string;
+	carGroup: string;
+	trackMedalsRequirement: number;
+	safetyRatingRequirement: number;
+	racecraftRatingRequirement: number;
+	password: string;
+	spectatorPassword: string;
+	maxCarSlots: number;
+	dumpLeaderboards: number;
+	isRaceLocked: number;
+	randomizeTrackWhenEmpty: number;
+	allowAutoDQ: number;
+	shortFormationLap: number;
+	dumpEntryList: number;
+	formationLapType: number;
+}
+
+const defaultSettings: Settings = {
+	serverName: '',
+	adminPassword: '',
+	carGroup: 'FreeForAll',
+	trackMedalsRequirement: -1,
+	safetyRatingRequirement: -1,
+	racecraftRatingRequirement: -1,
+	password: '',
+	spectatorPassword: '',
+	maxCarSlots: 24,
+	dumpLeaderboards: 1,
+	isRaceLocked: 1,
+	randomizeTrackWhenEmpty: 0,
+	allowAutoDQ: 1,
+	shortFormationLap: 1,
+	dumpEntryList: 1,
+	formationLapType: 1,
+};
+
 export default function EventRoute() {
 	const [year, setYear] = useState(TrackList[0].year);
 	const [track, setTrack] = useState(TrackList[0].tracks[0].trackName);
@@ -51,11 +89,9 @@ export default function EventRoute() {
 	]);
 	const [rows, setRows] = useState(1);
 	const [opacity, setOpacity] = useState('');
-
-	const styles = {
-		transition: 'all 2s ease-out',
-		opacity: 0.3,
-	};
+	const [serverName, setServerName] = useState('');
+	const [settingsJSON, setSettingsJSON] = useState(defaultSettings);
+	const [isPrivateServer, setIsPrivateServer] = useState(false);
 
 	function handleSelectTrack(
 		event:
@@ -103,11 +139,159 @@ export default function EventRoute() {
 		}
 	}
 
+	function handleSettingsJSON(
+		event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
+	): void {
+		setSettingsJSON({
+			...settingsJSON,
+			[event.target.id]: event.target.value,
+		});
+	}
+
+	function handleCheckboxJSON(event: ChangeEvent<HTMLInputElement>) {
+		if (isPrivateServer) {
+			setIsPrivateServer(false);
+			setSettingsJSON({
+				...settingsJSON,
+				password: '',
+			});
+		} else {
+			setIsPrivateServer(true);
+		}
+	}
+
 	return (
 		<div className='row justify-content-around'>
 			<div className='col-10  align-center'>
 				<div>
 					<h1 className='h1 text-center'>ACC Server Setup Tool</h1>
+					<div className='row align-items-start justify-content-evenly'>
+						<div className='col'>
+							<label htmlFor='serverName'>Server Name</label>
+							<input
+								type='text'
+								name='serverName'
+								id='serverName'
+								value={settingsJSON.serverName}
+								onChange={handleSettingsJSON}
+							/>
+						</div>
+						<div className='col'>
+							<label htmlFor='carGroup'>Car Group</label>
+							<select
+								name='carGroup'
+								id='carGroup'
+								onChange={handleSettingsJSON}>
+								<option value='FreeForAll' selected>
+									All Cars
+								</option>
+								<option value='GT3'>GT3</option>
+								<option value='GT4'>GT4</option>
+								<option value='Cup'>Porsche Cup</option>
+								<option value='ST'>Super Trofeo</option>
+							</select>
+						</div>
+						<div className='col'>
+							<label htmlFor='adminPassword'>
+								Admin Password
+							</label>
+							<input
+								type='text'
+								name='adminPassword'
+								id='adminPassword'
+								value={settingsJSON.adminPassword}
+								onChange={handleSettingsJSON}
+							/>
+						</div>
+						<div className='col'>
+							<label htmlFor='adminPassword'>
+								Spectator Password
+							</label>
+							<input
+								type='text'
+								name='spectatorPassword'
+								id='spectatorPassword'
+								value={settingsJSON.spectatorPassword}
+								onChange={handleSettingsJSON}
+							/>
+						</div>
+					</div>
+					<div className='row'>
+						<h2>Server Requirements</h2>
+					</div>
+					<div className='row align-items-start justify-content-evenly'>
+						<div className='col  py-3'>
+							<label>Track Medals</label>
+							<input
+								onChange={(e) => handleSettingsJSON(e)}
+								type='number'
+								id='trackMedalsRequirement'
+								min='-1'
+								max='3'
+								value={settingsJSON.trackMedalsRequirement}
+							/>
+						</div>
+						<div className='col py-3'>
+							<label>Safety Rating</label>
+							<input
+								onChange={(e) => handleSettingsJSON(e)}
+								type='number'
+								id='safetyRatingRequirement'
+								min='-1'
+								max='99'
+								value={settingsJSON.safetyRatingRequirement}
+							/>
+						</div>
+						<div className='col py-3'>
+							<label>Racecraft Rating</label>
+							<input
+								onChange={(e) => handleSettingsJSON(e)}
+								type='number'
+								id='racecraftRatingRequirement'
+								min='-1'
+								max='99'
+								value={settingsJSON.racecraftRatingRequirement}
+							/>
+						</div>
+						<div className='col py-3'>
+							<label htmlFor='maxCarSlots'>Car Slots</label>
+							<input
+								onChange={(e) => handleSettingsJSON(e)}
+								type='number'
+								id='maxCarSlots'
+								min='10'
+								max='99'
+								value={settingsJSON.maxCarSlots}
+							/>
+						</div>
+						<div className='row align-items-start justify-content-evenly'>
+							<div className='col py-3'>
+								<label>Is this a private server?</label>
+								<input
+									type='checkbox'
+									name='privateServer'
+									id='privateServer'
+									checked={isPrivateServer}
+									onChange={(e) => handleCheckboxJSON(e)}
+								/>
+							</div>
+
+							{isPrivateServer && (
+								<div className='col py-3'>
+									<label htmlFor='password'>
+										Server Password
+									</label>
+									<input
+										type='text'
+										name='password'
+										id='password'
+										value={settingsJSON.password}
+										onChange={handleSettingsJSON}
+									/>
+								</div>
+							)}
+						</div>
+					</div>
 					<div className='row align-items-start justify-content-evenly'>
 						<div className='col-4'>
 							<label>Select Year</label>
@@ -166,6 +350,7 @@ export default function EventRoute() {
 									id='ambientTemp'
 									min='15'
 									max='42'
+									value={eventJSON.ambientTemp}
 								/>
 							</div>
 							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
@@ -176,6 +361,7 @@ export default function EventRoute() {
 									id='cloudLevel'
 									min='0'
 									max='10'
+									value={eventJSON.cloudLevel * 10}
 								/>
 							</div>
 							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
@@ -187,13 +373,14 @@ export default function EventRoute() {
 									id='rain'
 									min='0'
 									max='10'
+									value={eventJSON.rain * 10}
 								/>
 							</div>
 						</div>
 					</div>
 				</div>
 				{/* {displayedSessions} */}
-				<div className='container-fluid '>
+				<div className=''>
 					{sessionsArr.map((session, index) => {
 						const {
 							sessionType,
@@ -203,26 +390,23 @@ export default function EventRoute() {
 							sessionDuration,
 						} = sessionsArr[index];
 						return (
-							<div
-								className={`bg-secondary rounded animate__animated animate__backInRight mb-2 ${opacity}`}
-								style={{ ...styles }}>
-								<Sessions
-									id={index}
-									key={index}
-									defaultSessionType={sessionType}
-									defaultHourOfDay={hourOfDay}
-									defaultDayOfWeekend={dayOfWeekend}
-									defaultTimeMultiplier={timeMulitplier}
-									defaultSessionDuration={sessionDuration}
-									sessionsArr={sessionsArr}
-									setSessionsArr={setSessionsArr}
-									eventJSON={eventJSON}
-									setEventJSON={setEventJSON}
-									rows={rows}
-									setRows={setRows}
-									setOpacity={setOpacity}
-								/>
-							</div>
+							<Sessions
+								id={index}
+								key={index}
+								defaultSessionType={sessionType}
+								defaultHourOfDay={hourOfDay}
+								defaultDayOfWeekend={dayOfWeekend}
+								defaultTimeMultiplier={timeMulitplier}
+								defaultSessionDuration={sessionDuration}
+								sessionsArr={sessionsArr}
+								setSessionsArr={setSessionsArr}
+								eventJSON={eventJSON}
+								setEventJSON={setEventJSON}
+								rows={rows}
+								setRows={setRows}
+								setOpacity={setOpacity}
+								opacity={opacity}
+							/>
 						);
 					})}
 				</div>
@@ -248,6 +432,18 @@ export default function EventRoute() {
 					<code>{JSON.stringify(eventJSON, null, 2)}</code>
 				</pre>
 			</div>
+			<div>
+				<pre>
+					<code>{JSON.stringify(settingsJSON, null, 2)}</code>
+				</pre>
+			</div>
+			<a
+				href={`data:text/json;charset=utf-8,${encodeURIComponent(
+					JSON.stringify(eventJSON, null, 2)
+				)}`}
+				download='event.json'>
+				<button>Download</button>
+			</a>
 		</div>
 	);
 }

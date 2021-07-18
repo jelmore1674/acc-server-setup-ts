@@ -1,3 +1,4 @@
+import events from 'events';
 import React from 'react';
 import { Event, SessionObj } from '../Routes/Event/event';
 
@@ -15,6 +16,12 @@ type Props = {
 	defaultTimeMultiplier: number;
 	defaultSessionDuration: number;
 	setOpacity: (state: string) => void;
+	opacity: string;
+};
+
+const styles = {
+	transition: 'all 2s ease-out',
+	opacity: 0.3,
 };
 
 export default function Sessions({
@@ -31,6 +38,7 @@ export default function Sessions({
 	defaultTimeMultiplier,
 	defaultSessionType,
 	setOpacity,
+	opacity,
 }: Props) {
 	const [addedToArray, setAdded] = React.useState(false); // Should only be changed once on initial load of Sessions element
 	const [sessionType, setSessionType] = React.useState(defaultSessionType); // set initial values inside useState(*Initial value*)
@@ -76,99 +84,102 @@ export default function Sessions({
 	}, [sessionType, hourOfDay, dayOfWeekend, timeMulitplier, sessionDuration]); // Add all form variables that require the object to be updated in this second parameter
 
 	function handleClick() {
-		setOpacity('animated__ animate__backOutUp');
-		setTimeout(() => {
-			setRows(rowRef.current - 1);
-			setSessionsArr(sessionsArr);
-		}, 1000);
-		sessionsArr.splice(id, 1);
+		for (let i = 0; i < sessionsArr.length; i++) {
+			if ((i = id)) {
+				setRows(rowRef.current - 1);
+				sessionsArr.splice(id, 1);
+				setSessionsArr(sessionsArr);
+			}
+		}
 
 		// setOpacity('');
 	}
 
 	return (
-		<div className='row align-content-center '>
-			<div className='col'>
-				<h2>Session {id + 1}</h2>
-				<div className='row'>
-					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
-						<label>Session Type</label>
-						<select
-							onChange={(e) => setSessionType(e.target.value)}
-							name='sessionType'
-							id='sessionType'
-							value={sessionsArr[id].sessionType}>
-							<option value={id}>practice</option>
-							<option value='q'>quali</option>
-							<option value='r'>race</option>
-						</select>
+		<div className={'bg-secondary rounded mb-3 p-3'}>
+			<div className='row align-content-center '>
+				<div className='col'>
+					<h2>Session {id + 1}</h2>
+					<div className='row '>
+						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+							<label>Session Type</label>
+							<select
+								onChange={(e) => setSessionType(e.target.value)}
+								name='sessionType'
+								id='sessionType'
+								value={sessionsArr[id].sessionType}>
+								<option value={id}>practice</option>
+								<option value='q'>quali</option>
+								<option value='r'>race</option>
+							</select>
+						</div>
+						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+							<label>Session Day</label>
+							<select
+								onChange={(e) => {
+									let parsedDate = parseInt(e.target.value);
+									setDayOfWeekend(parsedDate);
+								}} // Change all of these onChange functions to set the relative states
+								name='dayOfWeekend'
+								id='dayOfWeekend'
+								value={sessionsArr[id].dayOfWeekend}>
+								<option value='1'>Friday</option>
+								<option value='2'>Saturday</option>
+								<option value='3'>Sunday</option>
+							</select>
+						</div>
+						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+							<label>Session Start Time in Sim</label>
+							<input
+								onChange={(e) => {
+									setHourOfDay(parseInt(e.target.value));
+								}}
+								value={hourOfDay}
+								type='number'
+								id='hourOfDay'
+								min='0'
+								max='23'
+							/>
+						</div>
+						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+							<label>Session Duration</label>
+							<input
+								onChange={(e) =>
+									setSessionDuration(parseInt(e.target.value))
+								}
+								type='number'
+								id='sessionDuration'
+								min='0'
+								max='640'
+								value={sessionDuration}
+							/>
+						</div>
+						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+							<label>Time Mulitplier</label>
+							<input
+								onChange={(e) =>
+									setTimeMulitplier(parseInt(e.target.value))
+								}
+								type='number'
+								id='timeMulitplier'
+								min='1'
+								max='60'
+								value={timeMulitplier}
+							/>
+						</div>
+						<div className='col-2 d-flex flex-column justify-content-around mb-3'>
+							<button
+								className='btn btn-lg bg-danger p-3'
+								onClick={handleClick}>
+								<i
+									className='bi bi-trash fs-2'
+									style={{
+										color: 'white',
+									}}></i>
+							</button>
+						</div>
+						<div>{JSON.stringify(eventJSON.sessions[id])}</div>
 					</div>
-					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
-						<label>Session Day</label>
-						<select
-							onChange={(e) => {
-								let parsedDate = parseInt(e.target.value);
-								setDayOfWeekend(parsedDate);
-							}} // Change all of these onChange functions to set the relative states
-							name='dayOfWeekend'
-							id='dayOfWeekend'
-							value={sessionsArr[id].dayOfWeekend}>
-							<option value='1'>Friday</option>
-							<option value='2'>Saturday</option>
-							<option value='3'>Sunday</option>
-						</select>
-					</div>
-					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
-						<label>Session Start Time in Sim</label>
-						<input
-							onChange={(e) => {
-								setHourOfDay(parseInt(e.target.value));
-							}}
-							value={hourOfDay}
-							type='number'
-							id='hourOfDay'
-							min='0'
-							max='23'
-						/>
-					</div>
-					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
-						<label>Session Duration</label>
-						<input
-							onChange={(e) =>
-								setSessionDuration(parseInt(e.target.value))
-							}
-							type='number'
-							id='sessionDuration'
-							min='0'
-							max='640'
-							value={sessionDuration}
-						/>
-					</div>
-					<div className='col-2 d-flex flex-column justify-content-between mb-3'>
-						<label>Time Mulitplier</label>
-						<input
-							onChange={(e) =>
-								setTimeMulitplier(parseInt(e.target.value))
-							}
-							type='number'
-							id='timeMulitplier'
-							min='1'
-							max='60'
-							value={timeMulitplier}
-						/>
-					</div>
-					<div className='col-2 d-flex flex-column justify-content-around mb-3'>
-						<button
-							className='btn btn-lg bg-danger p-3'
-							onClick={handleClick}>
-							<i
-								className='bi bi-trash fs-2'
-								style={{
-									color: 'white',
-								}}></i>
-						</button>
-					</div>
-					<div>{JSON.stringify(eventJSON.sessions[id])}</div>
 				</div>
 			</div>
 		</div>
