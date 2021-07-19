@@ -2,6 +2,7 @@ import React, { ChangeEvent } from 'react';
 import { useState } from 'react';
 import Sessions from '../../components/Sessions';
 import TrackList from './tracks.json';
+import Input from '../../components/Input';
 
 export interface SessionObj {
 	hourOfDay: number;
@@ -80,6 +81,28 @@ const defaultSettings: Settings = {
 	formationLapType: 1,
 };
 
+interface EventRules {
+	qualifyStandingType: number;
+	pitWindowLengthSec: number;
+	mandatoryPitstopCount: number;
+	isRefuellingAllowedInRace: boolean;
+	isRefuellingTimeFixed: boolean;
+	isMandatoryPitstopRefuellingRequired: boolean;
+	isMandatoryPitstopTyreChangeRequired: boolean;
+	tyreSetCount: number;
+}
+
+const defaultEventRules: EventRules = {
+	qualifyStandingType: 1,
+	pitWindowLengthSec: 0,
+	mandatoryPitstopCount: 0,
+	isRefuellingAllowedInRace: true,
+	isRefuellingTimeFixed: false,
+	isMandatoryPitstopRefuellingRequired: true,
+	isMandatoryPitstopTyreChangeRequired: true,
+	tyreSetCount: 40,
+};
+
 export default function EventRoute() {
 	const [year, setYear] = useState(TrackList[0].year);
 	const [track, setTrack] = useState(TrackList[0].tracks[0].trackName);
@@ -88,27 +111,27 @@ export default function EventRoute() {
 		defaultSession,
 	]);
 	const [rows, setRows] = useState(1);
-	const [opacity, setOpacity] = useState('');
-	const [serverName, setServerName] = useState('');
 	const [settingsJSON, setSettingsJSON] = useState(defaultSettings);
+	const [eventRulesJSON, setEventRulesJSON] = useState(defaultEventRules);
 	const [isPrivateServer, setIsPrivateServer] = useState(false);
+	const [mandatoryPit, setMandatoryPit] = useState(false);
 
 	function handleSelectTrack(
 		event:
 			| React.ChangeEvent<HTMLInputElement>
 			| React.ChangeEvent<HTMLSelectElement>
 	): void {
-		if (event.target.id === 'cloudLevel') {
-			let cloudLevelRounded = parseInt(event.target.value) / 10;
+		if (event.target.id === 'cloudLevel' || event.target.id === 'rain') {
+			let rounded = parseInt(event.target.value) / 10;
 			setEventJSON({
 				...eventJSON,
-				[event.target.id]: cloudLevelRounded,
+				[event.target.id]: rounded,
 			});
-		} else if (event.target.id === 'rain') {
-			let rainRounded = parseInt(event.target.value) / 10;
+		} else if (event.target.id === 'weatherRandomness') {
+			let parsed = parseInt(event.target.value);
 			setEventJSON({
 				...eventJSON,
-				[event.target.id]: rainRounded,
+				[event.target.id]: parsed,
 			});
 		} else if (event.target.id === 'track') {
 			setTrack(event.target.value);
@@ -122,7 +145,6 @@ export default function EventRoute() {
 				[event.target.id]: event.target.value,
 			});
 		}
-		console.log(eventJSON);
 	}
 
 	function handleYearChange(event: ChangeEvent<HTMLSelectElement>): void {
@@ -142,10 +164,22 @@ export default function EventRoute() {
 	function handleSettingsJSON(
 		event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>
 	): void {
-		setSettingsJSON({
-			...settingsJSON,
-			[event.target.id]: event.target.value,
-		});
+		if (
+			event.target.id === 'trackMedalsRequirement' ||
+			event.target.id === 'safetyRatingRequirement' ||
+			event.target.id === 'racecraftRatingRequirement' ||
+			event.target.id === 'maxCarSlots'
+		) {
+			setSettingsJSON({
+				...settingsJSON,
+				[event.target.id]: parseInt(event.target.value),
+			});
+		} else {
+			setSettingsJSON({
+				...settingsJSON,
+				[event.target.id]: event.target.value,
+			});
+		}
 	}
 
 	function handleCheckboxJSON(event: ChangeEvent<HTMLInputElement>) {
@@ -160,24 +194,56 @@ export default function EventRoute() {
 		}
 	}
 
+	function handleEventRules(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.id === 'tyreSetCount') {
+			let parsed = parseInt(event.target.value);
+			setEventRulesJSON({
+				...eventRulesJSON,
+				[event.target.id]: parsed,
+			});
+		} else if (event.target.id === 'pitWindowLengthSec') {
+			let convertedToSec = parseInt(event.target.value) * 60;
+			setEventRulesJSON({
+				...eventRulesJSON,
+				[event.target.id]: convertedToSec,
+			});
+		} else {
+			setEventRulesJSON({
+				...eventRulesJSON,
+				[event.target.id]: event.target.value,
+			});
+		}
+	}
+
+	function handleCheckboxes(event: ChangeEvent<HTMLInputElement>) {
+		if (event.target.id === 'mandatoryPit') {
+			if (mandatoryPit) {
+				setMandatoryPit(false);
+			} else {
+				setMandatoryPit(true);
+			}
+		}
+	}
+
 	return (
-		<div className='row justify-content-around'>
-			<div className='col-10  align-center'>
-				<div>
-					<h1 className='h1 text-center'>ACC Server Setup Tool</h1>
+		<div className='container'>
+			<div className='row'>
+				<div className='col'>
+					<h1 className='h1 text-center mt-5'>
+						ACC Server Setup Tool
+					</h1>
 					<div className='row align-items-start justify-content-evenly'>
-						<div className='col'>
-							<label htmlFor='serverName'>Server Name</label>
-							<input
-								type='text'
-								name='serverName'
-								id='serverName'
-								value={settingsJSON.serverName}
-								onChange={handleSettingsJSON}
-							/>
-						</div>
-						<div className='col'>
-							<label htmlFor='carGroup'>Car Group</label>
+						<Input
+							name='serverName'
+							valueName={settingsJSON.serverName}
+							type='text'
+							handledChange={handleSettingsJSON}
+							label='Server Name'
+						/>
+						<div className='col-2 p-3 form-group'>
+							<label className='p-2' htmlFor='carGroup'>
+								Car Group
+							</label>
 							<select
 								name='carGroup'
 								id='carGroup'
@@ -191,195 +257,220 @@ export default function EventRoute() {
 								<option value='ST'>Super Trofeo</option>
 							</select>
 						</div>
-						<div className='col'>
-							<label htmlFor='adminPassword'>
-								Admin Password
-							</label>
-							<input
-								type='text'
-								name='adminPassword'
-								id='adminPassword'
-								value={settingsJSON.adminPassword}
-								onChange={handleSettingsJSON}
-							/>
-						</div>
-						<div className='col'>
-							<label htmlFor='adminPassword'>
-								Spectator Password
-							</label>
-							<input
-								type='text'
-								name='spectatorPassword'
-								id='spectatorPassword'
-								value={settingsJSON.spectatorPassword}
-								onChange={handleSettingsJSON}
-							/>
-						</div>
+						<Input
+							label='Admin Password'
+							type='text'
+							name='adminPassword'
+							valueName={settingsJSON.adminPassword}
+							handledChange={handleSettingsJSON}
+						/>
+						<Input
+							label='Spectator Password'
+							type='text'
+							name='spectatorPassword'
+							valueName={settingsJSON.spectatorPassword}
+							handledChange={handleSettingsJSON}
+						/>
 					</div>
-					<div className='row'>
+					<div className='row text-center'>
 						<h2>Server Requirements</h2>
 					</div>
 					<div className='row align-items-start justify-content-evenly'>
-						<div className='col  py-3'>
-							<label>Track Medals</label>
-							<input
-								onChange={(e) => handleSettingsJSON(e)}
-								type='number'
-								id='trackMedalsRequirement'
-								min='-1'
-								max='3'
-								value={settingsJSON.trackMedalsRequirement}
-							/>
+						<Input
+							label='Track Medals'
+							type='number'
+							name='trackMedalsRequirement'
+							min={-1}
+							max={3}
+							valueName={settingsJSON.trackMedalsRequirement}
+							handledChange={handleSettingsJSON}
+						/>
+						<Input
+							label='Safety Rating'
+							type='number'
+							name='safetyRatingRequirement'
+							min={-1}
+							max={99}
+							valueName={settingsJSON.safetyRatingRequirement}
+							handledChange={handleSettingsJSON}
+						/>
+						<Input
+							label='Racecraft Rating'
+							type='number'
+							name='racecraftRatingRequirement'
+							min={-1}
+							max={99}
+							valueName={settingsJSON.racecraftRatingRequirement}
+							handledChange={handleSettingsJSON}
+						/>
+						<Input
+							label='Car Slots'
+							type='number'
+							name='maxCarSlots'
+							min={10}
+							max={99}
+							valueName={settingsJSON.maxCarSlots}
+							handledChange={handleSettingsJSON}
+						/>
+
+						<div className='row  justify-content-evenly'>
+							<div className='col-4 p-3 form-group'>
+								<label className='p-2' htmlFor='year'>
+									Select Year
+								</label>
+								<select
+									name='year'
+									id='year'
+									value={year}
+									onChange={(e) => handleYearChange(e)}>
+									{TrackList.map((year) => {
+										return (
+											<option
+												value={year.year}
+												id={`${year.year}`}>
+												{year.year}
+											</option>
+										);
+									})}
+								</select>
+							</div>
+							<div className='col-4 p-3 form-group'>
+								<label className='p-2' htmlFor='track'>
+									{' '}
+									Select Track{' '}
+								</label>
+								<select
+									name='track'
+									id='track'
+									value={track}
+									onChange={(e) => handleSelectTrack(e)}>
+									{TrackList.map((track) => {
+										if (year === track.year) {
+											return track.tracks.map(
+												(track, index) => {
+													return (
+														<option
+															key={index}
+															value={
+																track.trackName
+															}>
+															{track.title}
+														</option>
+													);
+												}
+											);
+										}
+									})}
+								</select>
+							</div>
 						</div>
-						<div className='col py-3'>
-							<label>Safety Rating</label>
-							<input
-								onChange={(e) => handleSettingsJSON(e)}
-								type='number'
-								id='safetyRatingRequirement'
-								min='-1'
-								max='99'
-								value={settingsJSON.safetyRatingRequirement}
-							/>
-						</div>
-						<div className='col py-3'>
-							<label>Racecraft Rating</label>
-							<input
-								onChange={(e) => handleSettingsJSON(e)}
-								type='number'
-								id='racecraftRatingRequirement'
-								min='-1'
-								max='99'
-								value={settingsJSON.racecraftRatingRequirement}
-							/>
-						</div>
-						<div className='col py-3'>
-							<label htmlFor='maxCarSlots'>Car Slots</label>
-							<input
-								onChange={(e) => handleSettingsJSON(e)}
-								type='number'
-								id='maxCarSlots'
-								min='10'
-								max='99'
-								value={settingsJSON.maxCarSlots}
-							/>
-						</div>
-						<div className='row align-items-start justify-content-evenly'>
-							<div className='col py-3'>
-								<label>Is this a private server?</label>
-								<input
-									type='checkbox'
-									name='privateServer'
-									id='privateServer'
-									checked={isPrivateServer}
-									onChange={(e) => handleCheckboxJSON(e)}
+					</div>
+					<div className='row my-3'>
+						<div className='col text-center'>
+							<h2>Set up the weather</h2>
+							<div className='row justify-content-evenly align-center my-3'>
+								<Input
+									type='number'
+									label='Temp'
+									name='ambientTemp'
+									valueName={eventJSON.ambientTemp}
+									handledChange={handleSelectTrack}
+									min={15}
+									max={42}
+								/>
+								<Input
+									type='number'
+									label='Clouds'
+									name='cloudLevel'
+									valueName={eventJSON.cloudLevel * 10}
+									handledChange={handleSelectTrack}
+									min={0}
+									max={10}
+								/>
+								<Input
+									type='number'
+									label='Rain'
+									name='rain'
+									valueName={eventJSON.rain}
+									handledChange={handleSelectTrack}
+									min={0}
+									max={10}
+								/>
+								<Input
+									type='number'
+									label='Randomness'
+									name='weatherRandomness'
+									valueName={eventJSON.weatherRandomness}
+									handledChange={handleSelectTrack}
+									min={0}
+									max={10}
 								/>
 							</div>
+						</div>
+					</div>
+					<div className='row  justify-content-evenly'>
+						<div className='col py-3'>
+							<Input
+								label='Is this a private server?'
+								type='checkbox'
+								name='privateServer'
+								isChecked={isPrivateServer}
+								handledChange={handleCheckboxJSON}
+							/>
+						</div>
 
-							{isPrivateServer && (
-								<div className='col py-3'>
-									<label htmlFor='password'>
-										Server Password
-									</label>
-									<input
-										type='text'
-										name='password'
-										id='password'
-										value={settingsJSON.password}
-										onChange={handleSettingsJSON}
+						{isPrivateServer && (
+							<Input
+								label='Server Password'
+								type='text'
+								name='password'
+								valueName={settingsJSON.password}
+								handledChange={handleSettingsJSON}
+							/>
+						)}
+					</div>
+					{isPrivateServer && (
+						<div className='row  justify-content-evenly'>
+							<div className='col text-center'>
+								<h2>Event Rules</h2>
+							</div>
+							<div className='row justify-content-evenly align-center'>
+								<Input
+									type='number'
+									name='tyreSetCount'
+									valueName={eventRulesJSON.tyreSetCount}
+									label='Tire Sets'
+									handledChange={handleEventRules}
+									min={1}
+									max={50}
+								/>
+								<Input
+									label='Mandatory Pit?'
+									type='checkbox'
+									name='mandatoryPit'
+									isChecked={mandatoryPit}
+									handledChange={handleCheckboxes}
+								/>
+							</div>
+							{mandatoryPit && (
+								<div className='row justify-content-evenly'>
+									<Input
+										type='number'
+										name='pitWindowLengthSec'
+										valueName={
+											eventRulesJSON.pitWindowLengthSec /
+											60
+										}
+										label='Pit Window'
+										handledChange={handleEventRules}
+										min={5}
+										max={90}
 									/>
 								</div>
 							)}
 						</div>
-					</div>
-					<div className='row align-items-start justify-content-evenly'>
-						<div className='col-4'>
-							<label>Select Year</label>
-							<select
-								name='year'
-								id='year'
-								value={year}
-								onChange={(e) => handleYearChange(e)}>
-								{TrackList.map((year) => {
-									return (
-										<option
-											value={year.year}
-											id={`${year.year}`}>
-											{year.year}
-										</option>
-									);
-								})}
-							</select>
-						</div>
-
-						<div className='col-4'>
-							<label> Select Track </label>
-							<select
-								name='track'
-								id='track'
-								value={track}
-								onChange={(e) => handleSelectTrack(e)}>
-								{TrackList.map((track) => {
-									if (year === track.year) {
-										return track.tracks.map(
-											(track, index) => {
-												return (
-													<option
-														key={index}
-														value={track.trackName}>
-														{track.title}
-													</option>
-												);
-											}
-										);
-									}
-								})}
-							</select>
-						</div>
-					</div>
+					)}
 				</div>
-				<div className='row my-3'>
-					<div className='col text-center'>
-						<h2>Set up the weather</h2>
-						<div className='row align-center border border-secondary my-3'>
-							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
-								<label>Temp</label>
-								<input
-									onChange={(e) => handleSelectTrack(e)}
-									type='number'
-									id='ambientTemp'
-									min='15'
-									max='42'
-									value={eventJSON.ambientTemp}
-								/>
-							</div>
-							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
-								<label>Clouds</label>
-								<input
-									onChange={(e) => handleSelectTrack(e)}
-									type='number'
-									id='cloudLevel'
-									min='0'
-									max='10'
-									value={eventJSON.cloudLevel * 10}
-								/>
-							</div>
-							<div className='col d-flex justify-content-evenly border border-secondary py-3'>
-								<label>Rain</label>
-								<input
-									onChange={(e) => handleSelectTrack(e)}
-									type='number'
-									name='rain'
-									id='rain'
-									min='0'
-									max='10'
-									value={eventJSON.rain * 10}
-								/>
-							</div>
-						</div>
-					</div>
-				</div>
-				{/* {displayedSessions} */}
 				<div className=''>
 					{sessionsArr.map((session, index) => {
 						const {
@@ -404,19 +495,17 @@ export default function EventRoute() {
 								setEventJSON={setEventJSON}
 								rows={rows}
 								setRows={setRows}
-								setOpacity={setOpacity}
-								opacity={opacity}
 							/>
 						);
 					})}
 				</div>
 				<button
-					className='btn btn-lg bg-success m-4'
+					className='btn btn-lg bg-success '
 					onClick={() => {
 						setSessionsArr((prev) => [...prev, defaultSession]);
 						console.log(sessionsArr);
 						setEventJSON({ ...eventJSON, sessions: sessionsArr });
-						// setRows(rows + 1);
+						setRows(rows + 1);
 					}}>
 					<i className='bi bi-plus-lg' style={{ color: 'white' }}></i>
 				</button>
@@ -429,12 +518,7 @@ export default function EventRoute() {
 			</div>
 			<div>
 				<pre>
-					<code>{JSON.stringify(eventJSON, null, 2)}</code>
-				</pre>
-			</div>
-			<div>
-				<pre>
-					<code>{JSON.stringify(settingsJSON, null, 2)}</code>
+					<code>{JSON.stringify(eventRulesJSON, null, 2)}</code>
 				</pre>
 			</div>
 			<a

@@ -1,4 +1,3 @@
-import events from 'events';
 import React from 'react';
 import { Event, SessionObj } from '../Routes/Event/event';
 
@@ -15,13 +14,6 @@ type Props = {
 	defaultDayOfWeekend: number;
 	defaultTimeMultiplier: number;
 	defaultSessionDuration: number;
-	setOpacity: (state: string) => void;
-	opacity: string;
-};
-
-const styles = {
-	transition: 'all 2s ease-out',
-	opacity: 0.3,
 };
 
 export default function Sessions({
@@ -37,8 +29,6 @@ export default function Sessions({
 	defaultDayOfWeekend,
 	defaultTimeMultiplier,
 	defaultSessionType,
-	setOpacity,
-	opacity,
 }: Props) {
 	const [addedToArray, setAdded] = React.useState(false); // Should only be changed once on initial load of Sessions element
 	const [sessionType, setSessionType] = React.useState(defaultSessionType); // set initial values inside useState(*Initial value*)
@@ -52,18 +42,6 @@ export default function Sessions({
 	const [hourOfDay, setHourOfDay] = React.useState(defaultHourOfDay);
 	const rowRef = React.useRef(rows);
 	rowRef.current = rows;
-
-	// In the useEffect if (added) > update object, else > add to sessionArr
-	// Add an object with an initial starting state to sessionsArr
-	// setAdded(true)
-
-	let selectedSession: SessionObj = {
-		hourOfDay: hourOfDay,
-		sessionType: sessionType,
-		dayOfWeekend: dayOfWeekend,
-		timeMulitplier: timeMulitplier,
-		sessionDuration: sessionDuration,
-	};
 
 	React.useEffect(() => {
 		if (addedToArray) {
@@ -85,7 +63,7 @@ export default function Sessions({
 
 	function handleClick() {
 		for (let i = 0; i < sessionsArr.length; i++) {
-			if ((i = id)) {
+			if (i === id) {
 				setRows(rowRef.current - 1);
 				sessionsArr.splice(id, 1);
 				setSessionsArr(sessionsArr);
@@ -119,7 +97,7 @@ export default function Sessions({
 								onChange={(e) => {
 									let parsedDate = parseInt(e.target.value);
 									setDayOfWeekend(parsedDate);
-								}} // Change all of these onChange functions to set the relative states
+								}}
 								name='dayOfWeekend'
 								id='dayOfWeekend'
 								value={sessionsArr[id].dayOfWeekend}>
