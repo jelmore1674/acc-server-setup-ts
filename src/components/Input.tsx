@@ -9,6 +9,7 @@ type Props = {
 	min?: number;
 	max?: number;
 	isChecked?: any;
+	refs?: any;
 };
 
 export default function Input({
@@ -20,6 +21,7 @@ export default function Input({
 	min,
 	max,
 	isChecked,
+	refs,
 }: Props) {
 	return (
 		<div
@@ -28,7 +30,8 @@ export default function Input({
 				(type === 'checkbox' && valueName === 'mandatoryPit')
 					? 'col-2 p-3 form-group'
 					: 'col p-3 form-group'
-			}>
+			}
+			ref={refs}>
 			<label className='m-2' htmlFor={name}>
 				{label}
 			</label>

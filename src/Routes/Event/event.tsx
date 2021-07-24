@@ -1,8 +1,9 @@
 import React, { ChangeEvent } from 'react';
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Sessions from '../../components/Sessions';
 import TrackList from './tracks.json';
 import Input from '../../components/Input';
+import { Tooltip } from '../../assets/bootstrap-5.0.2-dist/js/bootstrap.esm';
 
 export interface SessionObj {
 	hourOfDay: number;
@@ -116,6 +117,111 @@ export default function EventRoute() {
 	const [isPrivateServer, setIsPrivateServer] = useState(false);
 	const [mandatoryPit, setMandatoryPit] = useState(false);
 
+	const tooltipRef: any = useRef();
+	const tooltipServerName: any = useRef();
+	const tooltipAdminPass: any = useRef();
+	const tooltipSpecPass: any = useRef();
+	const tooltipCarGroup: any = useRef();
+	const tooltipTrackMedals: any = useRef();
+	const tooltipSafety: any = useRef();
+	const tooltipRaceCraft: any = useRef();
+	const tooltipCarSlots: any = useRef();
+	const tooltipTemp: any = useRef();
+	const tooltipClouds: any = useRef();
+	const tooltipRain: any = useRef();
+	const tooltipRandomness: any = useRef();
+	const tooltipTireSets: any = useRef();
+	const tooltipServerPassword: any = useRef();
+
+	useEffect(() => {
+		var tooltip = new Tooltip(tooltipRef.current, {
+			title: 'What up',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipServerName.current, {
+			title: 'Enter the name of the server',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipAdminPass.current, {
+			title: 'The password you specify allows a driver or spectator to log in as Server Admin in the chat window of the server',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipSpecPass.current, {
+			title: 'Password to enter the server as spectator. Must be different to “password” if both is set.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipCarGroup.current, {
+			title: 'Defines the car group for this server.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipTrackMedals.current, {
+			title: 'Defines the amount of track medals that a user has to have for the given track. Set to -1 to disable by default.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipSafety.current, {
+			title: 'Defines the Safety Rating (SA) that a user must have to join this server. Select anywhere from -1 - 99. Set to -1 to disable by default.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipRaceCraft.current, {
+			title: 'Defines the Racecraft Rating (RC) that a user must have to join this server. Select anywhere from -1 - 99. Set to -1 to disable by default.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipCarSlots.current, {
+			title: 'Password to enter the server as spectator. Must be different to “password” if both is set.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipTemp.current, {
+			title: 'Sets the baseline ambient temperature in °C.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipClouds.current, {
+			title: 'Sets the baseline cloud level',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipRain.current, {
+			title: 'If weather randomness is off, defines the static rain level. With dynamic weather, it increases the rain chance. Values greater than 1 can override the value of the cloud level.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipRandomness.current, {
+			html: true,
+			title: `<div>
+			<h6>Sets the dynamic weather level</h3>
+			<ul>
+				<li>0 = Static Weather</li>
+				<li>1-4 = fairly realistic weather</li>
+				<li>5-7 = more sensational</li>
+			</ul>
+		</div>`,
+			placement: 'top',
+			trigger: 'hover',
+		});
+
+		if (isPrivateServer) {
+			tooltip = new Tooltip(tooltipServerPassword.current, {
+				title: 'Set server to private by adding a password to enable event rules features.',
+				placement: 'top',
+				trigger: 'hover',
+			});
+			tooltip = new Tooltip(tooltipTireSets.current, {
+				title: 'Set the number of tire sets for the race weekend',
+				placement: 'top',
+				trigger: 'hover',
+			});
+		}
+	});
+
 	function handleSelectTrack(
 		event:
 			| React.ChangeEvent<HTMLInputElement>
@@ -207,6 +313,22 @@ export default function EventRoute() {
 				...eventRulesJSON,
 				[event.target.id]: convertedToSec,
 			});
+		} else if (
+			event.target.id === 'isRefuellingAllowedInRace' ||
+			event.target.id === 'isRefuellingTimeFixed' ||
+			event.target.id === 'isMandatoryPitstopRefuellingRequired'
+		) {
+			if (eventRulesJSON[event.target.id]) {
+				setEventRulesJSON({
+					...eventRulesJSON,
+					[event.target.id]: false,
+				});
+			} else {
+				setEventRulesJSON({
+					...eventRulesJSON,
+					[event.target.id]: true,
+				});
+			}
 		} else {
 			setEventRulesJSON({
 				...eventRulesJSON,
@@ -229,18 +351,21 @@ export default function EventRoute() {
 		<div className='container'>
 			<div className='row'>
 				<div className='col'>
-					<h1 className='h1 text-center mt-5'>
+					<h1 className='h1 text-center mt-5' ref={tooltipRef}>
 						ACC Server Setup Tool
 					</h1>
 					<div className='row align-items-start justify-content-evenly'>
 						<Input
+							refs={tooltipServerName}
 							name='serverName'
 							valueName={settingsJSON.serverName}
 							type='text'
 							handledChange={handleSettingsJSON}
 							label='Server Name'
 						/>
-						<div className='col-2 p-3 form-group'>
+						<div
+							className='col-2 p-3 form-group'
+							ref={tooltipCarGroup}>
 							<label className='p-2' htmlFor='carGroup'>
 								Car Group
 							</label>
@@ -258,6 +383,7 @@ export default function EventRoute() {
 							</select>
 						</div>
 						<Input
+							refs={tooltipAdminPass}
 							label='Admin Password'
 							type='text'
 							name='adminPassword'
@@ -265,6 +391,7 @@ export default function EventRoute() {
 							handledChange={handleSettingsJSON}
 						/>
 						<Input
+							refs={tooltipSpecPass}
 							label='Spectator Password'
 							type='text'
 							name='spectatorPassword'
@@ -277,6 +404,7 @@ export default function EventRoute() {
 					</div>
 					<div className='row align-items-start justify-content-evenly'>
 						<Input
+							refs={tooltipTrackMedals}
 							label='Track Medals'
 							type='number'
 							name='trackMedalsRequirement'
@@ -286,6 +414,7 @@ export default function EventRoute() {
 							handledChange={handleSettingsJSON}
 						/>
 						<Input
+							refs={tooltipSafety}
 							label='Safety Rating'
 							type='number'
 							name='safetyRatingRequirement'
@@ -295,6 +424,7 @@ export default function EventRoute() {
 							handledChange={handleSettingsJSON}
 						/>
 						<Input
+							refs={tooltipRaceCraft}
 							label='Racecraft Rating'
 							type='number'
 							name='racecraftRatingRequirement'
@@ -304,6 +434,7 @@ export default function EventRoute() {
 							handledChange={handleSettingsJSON}
 						/>
 						<Input
+							refs={tooltipCarSlots}
 							label='Car Slots'
 							type='number'
 							name='maxCarSlots'
@@ -312,7 +443,6 @@ export default function EventRoute() {
 							valueName={settingsJSON.maxCarSlots}
 							handledChange={handleSettingsJSON}
 						/>
-
 						<div className='row  justify-content-evenly'>
 							<div className='col-4 p-3 form-group'>
 								<label className='p-2' htmlFor='year'>
@@ -360,6 +490,7 @@ export default function EventRoute() {
 												}
 											);
 										}
+										return null;
 									})}
 								</select>
 							</div>
@@ -370,6 +501,7 @@ export default function EventRoute() {
 							<h2>Set up the weather</h2>
 							<div className='row justify-content-evenly align-center my-3'>
 								<Input
+									refs={tooltipTemp}
 									type='number'
 									label='Temp'
 									name='ambientTemp'
@@ -379,6 +511,7 @@ export default function EventRoute() {
 									max={42}
 								/>
 								<Input
+									refs={tooltipClouds}
 									type='number'
 									label='Clouds'
 									name='cloudLevel'
@@ -388,6 +521,7 @@ export default function EventRoute() {
 									max={10}
 								/>
 								<Input
+									refs={tooltipRain}
 									type='number'
 									label='Rain'
 									name='rain'
@@ -397,6 +531,7 @@ export default function EventRoute() {
 									max={10}
 								/>
 								<Input
+									refs={tooltipRandomness}
 									type='number'
 									label='Randomness'
 									name='weatherRandomness'
@@ -418,9 +553,9 @@ export default function EventRoute() {
 								handledChange={handleCheckboxJSON}
 							/>
 						</div>
-
 						{isPrivateServer && (
 							<Input
+								refs={tooltipServerPassword}
 								label='Server Password'
 								type='text'
 								name='password'
@@ -434,8 +569,9 @@ export default function EventRoute() {
 							<div className='col text-center'>
 								<h2>Event Rules</h2>
 							</div>
-							<div className='row justify-content-evenly align-center'>
+							<div className='row align-center'>
 								<Input
+									refs={tooltipTireSets}
 									type='number'
 									name='tyreSetCount'
 									valueName={eventRulesJSON.tyreSetCount}
@@ -453,7 +589,7 @@ export default function EventRoute() {
 								/>
 							</div>
 							{mandatoryPit && (
-								<div className='row justify-content-evenly'>
+								<div className='row justify-content-evenly align-center'>
 									<Input
 										type='number'
 										name='pitWindowLengthSec'
@@ -465,6 +601,33 @@ export default function EventRoute() {
 										handledChange={handleEventRules}
 										min={5}
 										max={90}
+									/>
+									<Input
+										label='Is refuelling Allowed?'
+										type='checkbox'
+										name='isRefuellingAllowedInRace'
+										isChecked={
+											eventRulesJSON.isRefuellingAllowedInRace
+										}
+										handledChange={handleEventRules}
+									/>
+									<Input
+										label='Fixed Refuelling Time? '
+										type='checkbox'
+										name='isRefuellingTimeFixed'
+										isChecked={
+											eventRulesJSON.isRefuellingTimeFixed
+										}
+										handledChange={handleEventRules}
+									/>
+									<Input
+										label='Mandatory Refuelling'
+										type='checkbox'
+										name='isMandatoryPitstopRefuellingRequired'
+										isChecked={
+											eventRulesJSON.isMandatoryPitstopRefuellingRequired
+										}
+										handledChange={handleEventRules}
 									/>
 								</div>
 							)}
@@ -526,7 +689,27 @@ export default function EventRoute() {
 					JSON.stringify(eventJSON, null, 2)
 				)}`}
 				download='event.json'>
-				<button>Download</button>
+				<button className='btn btn-lg bg-primary mb-5'>
+					Download Event JSON
+				</button>
+			</a>
+			<a
+				href={`data:text/json;charset=utf-8,${encodeURIComponent(
+					JSON.stringify(settingsJSON, null, 2)
+				)}`}
+				download='settings.json'>
+				<button className='btn btn-lg bg-secondary mx-3 mb-5'>
+					Download Settings JSON
+				</button>
+			</a>
+			<a
+				href={`data:text/json;charset=utf-8,${encodeURIComponent(
+					JSON.stringify(eventRulesJSON, null, 2)
+				)}`}
+				download='eventrules.json'>
+				<button className='btn btn-lg bg-info mb-5'>
+					Download Event Rules JSON
+				</button>
 			</a>
 		</div>
 	);
