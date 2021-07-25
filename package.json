@@ -1,7 +1,7 @@
 {
     "name": "acc-server-setup-ts",
     "version": "0.1.0",
-    "homepage": "https://jelmore1674.github.io/acc-server-setup-ts",
+    "homepage": "http://accserversetup.slipstreamracing.net",
     "private": true,
     "dependencies": {
         "@testing-library/jest-dom": "^5.11.4",
