@@ -1,5 +1,6 @@
 import React from 'react';
 import { Event, SessionObj } from '../Routes/Event/event';
+import { Tooltip } from '../assets/bootstrap-5.0.2-dist/js/bootstrap.esm';
 
 type Props = {
 	sessionsArr: SessionObj[];
@@ -42,8 +43,38 @@ export default function Sessions({
 	const [hourOfDay, setHourOfDay] = React.useState(defaultHourOfDay);
 	const rowRef = React.useRef(rows);
 	rowRef.current = rows;
+	const tooltipDay: any = React.useRef();
+	const tooltipType: any = React.useRef();
+	const tooltipTime: any = React.useRef();
+	const tooltipDuration: any = React.useRef();
+	const tooltipTimeMultiplier: any = React.useRef();
 
 	React.useEffect(() => {
+		var tooltip = new Tooltip(tooltipDay.current, {
+			title: 'Select the day for the session.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipType.current, {
+			title: 'Select the type of session. If including a race, be sure to have either a practice or quali session before the race.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipTime.current, {
+			title: 'Set the time of the current session.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipDuration.current, {
+			title: 'Set the duration of the current session.',
+			placement: 'top',
+			trigger: 'hover',
+		});
+		tooltip = new Tooltip(tooltipTimeMultiplier.current, {
+			title: 'Set the time multiplier of the current session.',
+			placement: 'top',
+			trigger: 'hover',
+		});
 		if (addedToArray) {
 			// Overwrite existing element in sessionArr
 			let selectedSession: SessionObj = {
@@ -79,19 +110,23 @@ export default function Sessions({
 				<div className='col'>
 					<h2>Session {id + 1}</h2>
 					<div className='row '>
-						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+						<div
+							ref={tooltipType}
+							className='col-2 d-flex flex-column justify-content-between mb-3'>
 							<label>Session Type</label>
 							<select
 								onChange={(e) => setSessionType(e.target.value)}
 								name='sessionType'
 								id='sessionType'
 								value={sessionsArr[id].sessionType}>
-								<option value={id}>practice</option>
-								<option value='q'>quali</option>
-								<option value='r'>race</option>
+								<option value='p'>Practice</option>
+								<option value='q'>Quali</option>
+								<option value='r'>Race</option>
 							</select>
 						</div>
-						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+						<div
+							ref={tooltipDay}
+							className='col-2 d-flex flex-column justify-content-between mb-3'>
 							<label>Session Day</label>
 							<select
 								onChange={(e) => {
@@ -106,20 +141,24 @@ export default function Sessions({
 								<option value='3'>Sunday</option>
 							</select>
 						</div>
-						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+						<div
+							ref={tooltipTime}
+							className='col-2 d-flex flex-column justify-content-between mb-3'>
 							<label>Session Start Time in Sim</label>
 							<input
 								onChange={(e) => {
 									setHourOfDay(parseInt(e.target.value));
 								}}
-								value={hourOfDay}
+								value={sessionsArr[id].hourOfDay}
 								type='number'
 								id='hourOfDay'
 								min='0'
 								max='23'
 							/>
 						</div>
-						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+						<div
+							ref={tooltipDuration}
+							className='col-2 d-flex flex-column justify-content-between mb-3'>
 							<label>Session Duration</label>
 							<input
 								onChange={(e) =>
@@ -129,10 +168,12 @@ export default function Sessions({
 								id='sessionDuration'
 								min='0'
 								max='640'
-								value={sessionDuration}
+								value={sessionsArr[id].sessionDuration}
 							/>
 						</div>
-						<div className='col-2 d-flex flex-column justify-content-between mb-3'>
+						<div
+							ref={tooltipTimeMultiplier}
+							className='col-2 d-flex flex-column justify-content-between mb-3'>
 							<label>Time Mulitplier</label>
 							<input
 								onChange={(e) =>
@@ -142,7 +183,7 @@ export default function Sessions({
 								id='timeMulitplier'
 								min='1'
 								max='60'
-								value={timeMulitplier}
+								value={sessionsArr[id].timeMulitplier}
 							/>
 						</div>
 						<div className='col-2 d-flex flex-column justify-content-around mb-3'>
@@ -156,7 +197,6 @@ export default function Sessions({
 									}}></i>
 							</button>
 						</div>
-						<div>{JSON.stringify(eventJSON.sessions[id])}</div>
 					</div>
 				</div>
 			</div>

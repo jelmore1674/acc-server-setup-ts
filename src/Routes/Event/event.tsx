@@ -91,6 +91,7 @@ interface EventRules {
 	isMandatoryPitstopRefuellingRequired: boolean;
 	isMandatoryPitstopTyreChangeRequired: boolean;
 	tyreSetCount: number;
+	driverStintTimeSec: number;
 }
 
 const defaultEventRules: EventRules = {
@@ -102,6 +103,7 @@ const defaultEventRules: EventRules = {
 	isMandatoryPitstopRefuellingRequired: true,
 	isMandatoryPitstopTyreChangeRequired: true,
 	tyreSetCount: 40,
+	driverStintTimeSec: -1,
 };
 
 export default function EventRoute() {
@@ -132,6 +134,12 @@ export default function EventRoute() {
 	const tooltipRandomness: any = useRef();
 	const tooltipTireSets: any = useRef();
 	const tooltipServerPassword: any = useRef();
+	const tooltipRefuelingAllowed: any = useRef();
+	const tooltipFixedRefuellingTime: any = useRef();
+	const tooltipNumberOfMandatoryPitstops: any = useRef();
+	const tooltipPitWindow: any = useRef();
+	const tooltipMandatoryTireChange: any = useRef();
+	const tooltipMandatoryRefuelling: any = useRef();
 
 	useEffect(() => {
 		var tooltip = new Tooltip(tooltipRef.current, {
@@ -219,6 +227,41 @@ export default function EventRoute() {
 				placement: 'top',
 				trigger: 'hover',
 			});
+			tooltip = new Tooltip(tooltipRefuelingAllowed.current, {
+				title: 'Set whether refeulling is allowed or not.',
+				placement: 'top',
+				trigger: 'hover',
+			});
+			tooltip = new Tooltip(tooltipFixedRefuellingTime.current, {
+				title: 'Set whether refeulling is set to a fixed time. Used to negate fuel advantages from other cars',
+				placement: 'top',
+				trigger: 'hover',
+			});
+			if (mandatoryPit) {
+				tooltip = new Tooltip(
+					tooltipNumberOfMandatoryPitstops.current,
+					{
+						title: 'Set the number of mandatory stops in the race. ',
+						placement: 'top',
+						trigger: 'hover',
+					}
+				);
+				tooltip = new Tooltip(tooltipPitWindow.current, {
+					title: 'Set the length of the pit window.',
+					placement: 'top',
+					trigger: 'hover',
+				});
+				tooltip = new Tooltip(tooltipMandatoryTireChange.current, {
+					title: 'Set whether a tire change is mandatory in the race.',
+					placement: 'top',
+					trigger: 'hover',
+				});
+				tooltip = new Tooltip(tooltipMandatoryRefuelling.current, {
+					title: 'Set whether refuelling is mandatory in the race. ',
+					placement: 'top',
+					trigger: 'hover',
+				});
+			}
 		}
 	});
 
@@ -316,7 +359,8 @@ export default function EventRoute() {
 		} else if (
 			event.target.id === 'isRefuellingAllowedInRace' ||
 			event.target.id === 'isRefuellingTimeFixed' ||
-			event.target.id === 'isMandatoryPitstopRefuellingRequired'
+			event.target.id === 'isMandatoryPitstopRefuellingRequired' ||
+			event.target.id === 'isMandatoryPitstopTyreChangeRequired'
 		) {
 			if (eventRulesJSON[event.target.id]) {
 				setEventRulesJSON({
@@ -341,8 +385,18 @@ export default function EventRoute() {
 		if (event.target.id === 'mandatoryPit') {
 			if (mandatoryPit) {
 				setMandatoryPit(false);
+				setEventRulesJSON({
+					...eventRulesJSON,
+					mandatoryPitstopCount: 0,
+					isMandatoryPitstopTyreChangeRequired: false,
+					isMandatoryPitstopRefuellingRequired: false,
+				});
 			} else {
 				setMandatoryPit(true);
+				setEventRulesJSON({
+					...eventRulesJSON,
+					mandatoryPitstopCount: 1,
+				});
 			}
 		}
 	}
@@ -399,7 +453,7 @@ export default function EventRoute() {
 							handledChange={handleSettingsJSON}
 						/>
 					</div>
-					<div className='row text-center'>
+					<div className='row text-center mt-4'>
 						<h2>Server Requirements</h2>
 					</div>
 					<div className='row align-items-start justify-content-evenly'>
@@ -443,6 +497,9 @@ export default function EventRoute() {
 							valueName={settingsJSON.maxCarSlots}
 							handledChange={handleSettingsJSON}
 						/>
+						<div className='row text-center mt-4'>
+							<h2>Select Track</h2>
+						</div>
 						<div className='row  justify-content-evenly'>
 							<div className='col-4 p-3 form-group'>
 								<label className='p-2' htmlFor='year'>
@@ -464,6 +521,7 @@ export default function EventRoute() {
 									})}
 								</select>
 							</div>
+
 							<div className='col-4 p-3 form-group'>
 								<label className='p-2' htmlFor='track'>
 									{' '}
@@ -497,7 +555,7 @@ export default function EventRoute() {
 						</div>
 					</div>
 					<div className='row my-3'>
-						<div className='col text-center'>
+						<div className='col text-center mt-4'>
 							<h2>Set up the weather</h2>
 							<div className='row justify-content-evenly align-center my-3'>
 								<Input
@@ -566,7 +624,7 @@ export default function EventRoute() {
 					</div>
 					{isPrivateServer && (
 						<div className='row  justify-content-evenly'>
-							<div className='col text-center'>
+							<div className='col text-center mt-4'>
 								<h2>Event Rules</h2>
 							</div>
 							<div className='row align-center'>
@@ -581,6 +639,26 @@ export default function EventRoute() {
 									max={50}
 								/>
 								<Input
+									refs={tooltipRefuelingAllowed}
+									label='Is refuelling Allowed?'
+									type='checkbox'
+									name='isRefuellingAllowedInRace'
+									isChecked={
+										eventRulesJSON.isRefuellingAllowedInRace
+									}
+									handledChange={handleEventRules}
+								/>
+								<Input
+									refs={tooltipFixedRefuellingTime}
+									label='Fixed Refuelling Time? '
+									type='checkbox'
+									name='isRefuellingTimeFixed'
+									isChecked={
+										eventRulesJSON.isRefuellingTimeFixed
+									}
+									handledChange={handleEventRules}
+								/>
+								<Input
 									label='Mandatory Pit?'
 									type='checkbox'
 									name='mandatoryPit'
@@ -591,6 +669,19 @@ export default function EventRoute() {
 							{mandatoryPit && (
 								<div className='row justify-content-evenly align-center'>
 									<Input
+										refs={tooltipNumberOfMandatoryPitstops}
+										type='number'
+										name='mandatoryPitstopCount'
+										valueName={
+											eventRulesJSON.mandatoryPitstopCount
+										}
+										label='Number of Pit Stops'
+										handledChange={handleEventRules}
+										min={0}
+										max={30}
+									/>
+									<Input
+										refs={tooltipPitWindow}
 										type='number'
 										name='pitWindowLengthSec'
 										valueName={
@@ -603,24 +694,17 @@ export default function EventRoute() {
 										max={90}
 									/>
 									<Input
-										label='Is refuelling Allowed?'
+										refs={tooltipMandatoryTireChange}
+										label='Mandatory Tire Change'
 										type='checkbox'
-										name='isRefuellingAllowedInRace'
+										name='isMandatoryPitstopTyreChangeRequired'
 										isChecked={
-											eventRulesJSON.isRefuellingAllowedInRace
+											eventRulesJSON.isMandatoryPitstopTyreChangeRequired
 										}
 										handledChange={handleEventRules}
 									/>
 									<Input
-										label='Fixed Refuelling Time? '
-										type='checkbox'
-										name='isRefuellingTimeFixed'
-										isChecked={
-											eventRulesJSON.isRefuellingTimeFixed
-										}
-										handledChange={handleEventRules}
-									/>
-									<Input
+										refs={tooltipMandatoryRefuelling}
 										label='Mandatory Refuelling'
 										type='checkbox'
 										name='isMandatoryPitstopRefuellingRequired'
@@ -672,45 +756,57 @@ export default function EventRoute() {
 					}}>
 					<i className='bi bi-plus-lg' style={{ color: 'white' }}></i>
 				</button>
-				<button
-					onClick={() => {
-						console.log(sessionsArr);
-					}}>
-					Log SessionARR
-				</button>
+			</div>
+			<div className='m-3 row'>
+				<p>
+					After you have all of your desired settings, download the
+					files below and put them in the folder where your server
+					files are.
+				</p>
+			</div>
+			<div className='mt-5 row justify-content-evenly'>
+				<div className='col'>
+					<a
+						href={`data:text/json;charset=utf-8,${encodeURIComponent(
+							JSON.stringify(eventJSON, null, 2)
+						)}`}
+						download='event.json'>
+						<button className='btn btn-lg bg-primary mb-5'>
+							Download Event JSON
+						</button>
+					</a>
+				</div>
+				<div className='col'>
+					<a
+						href={`data:text/json;charset=utf-8,${encodeURIComponent(
+							JSON.stringify(settingsJSON, null, 2)
+						)}`}
+						download='settings.json'>
+						<button className='btn btn-lg bg-secondary mx-3 mb-5'>
+							Download Settings JSON
+						</button>
+					</a>
+				</div>
+				<div className='col'>
+					<a
+						href={`data:text/json;charset=utf-8,${encodeURIComponent(
+							JSON.stringify(eventRulesJSON, null, 2)
+						)}`}
+						download='eventrules.json'>
+						<button className='btn btn-lg bg-info mb-5'>
+							Download Event Rules JSON
+						</button>
+					</a>
+				</div>
 			</div>
 			<div>
-				<pre>
-					<code>{JSON.stringify(eventRulesJSON, null, 2)}</code>
-				</pre>
+				<p>
+					For any feature requests or bugs, send an email to{' '}
+					<a href='mailto:admin@slipstreamracing.net'>
+						admin@slipstreamracing.net
+					</a>
+				</p>
 			</div>
-			<a
-				href={`data:text/json;charset=utf-8,${encodeURIComponent(
-					JSON.stringify(eventJSON, null, 2)
-				)}`}
-				download='event.json'>
-				<button className='btn btn-lg bg-primary mb-5'>
-					Download Event JSON
-				</button>
-			</a>
-			<a
-				href={`data:text/json;charset=utf-8,${encodeURIComponent(
-					JSON.stringify(settingsJSON, null, 2)
-				)}`}
-				download='settings.json'>
-				<button className='btn btn-lg bg-secondary mx-3 mb-5'>
-					Download Settings JSON
-				</button>
-			</a>
-			<a
-				href={`data:text/json;charset=utf-8,${encodeURIComponent(
-					JSON.stringify(eventRulesJSON, null, 2)
-				)}`}
-				download='eventrules.json'>
-				<button className='btn btn-lg bg-info mb-5'>
-					Download Event Rules JSON
-				</button>
-			</a>
 		</div>
 	);
 }
