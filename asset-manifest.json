@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/acc-server-setup-ts/static/css/main.f40c45db.chunk.css",
+    "main.js": "/acc-server-setup-ts/static/js/main.35e0a5d6.chunk.js",
+    "main.js.map": "/acc-server-setup-ts/static/js/main.35e0a5d6.chunk.js.map",
+    "runtime-main.js": "/acc-server-setup-ts/static/js/runtime-main.be099236.js",
+    "runtime-main.js.map": "/acc-server-setup-ts/static/js/runtime-main.be099236.js.map",
+    "static/css/2.ade656b2.chunk.css": "/acc-server-setup-ts/static/css/2.ade656b2.chunk.css",
+    "static/js/2.2e1c78b4.chunk.js": "/acc-server-setup-ts/static/js/2.2e1c78b4.chunk.js",
+    "static/js/2.2e1c78b4.chunk.js.map": "/acc-server-setup-ts/static/js/2.2e1c78b4.chunk.js.map",
+    "static/js/3.27c1a29d.chunk.js": "/acc-server-setup-ts/static/js/3.27c1a29d.chunk.js",
+    "static/js/3.27c1a29d.chunk.js.map": "/acc-server-setup-ts/static/js/3.27c1a29d.chunk.js.map",
+    "index.html": "/acc-server-setup-ts/index.html",
+    "static/css/2.ade656b2.chunk.css.map": "/acc-server-setup-ts/static/css/2.ade656b2.chunk.css.map",
+    "static/css/main.f40c45db.chunk.css.map": "/acc-server-setup-ts/static/css/main.f40c45db.chunk.css.map",
+    "static/js/2.2e1c78b4.chunk.js.LICENSE.txt": "/acc-server-setup-ts/static/js/2.2e1c78b4.chunk.js.LICENSE.txt",
+    "static/media/bootstrap-icons.css": "/acc-server-setup-ts/static/media/bootstrap-icons.dfd0ea12.woff2"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.be099236.js",
+    "static/css/2.ade656b2.chunk.css",
+    "static/js/2.2e1c78b4.chunk.js",
+    "static/css/main.f40c45db.chunk.css",
+    "static/js/main.35e0a5d6.chunk.js"
+  ]
+}
